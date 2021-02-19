@@ -1,0 +1,19 @@
+DROP DATABASE IF EXISTS TwitterDB;
+
+CREATE DATABASE TwitterDB;
+
+USE TwitterDB;
+
+CREATE TABLE IF NOT EXISTS Tweets(
+tweet_id BIGINT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+user_id BIGINT NOT NULL,
+tweet_ts DATETIME,
+tweet_text VARCHAR(140),
+INDEX uid (user_id)
+);
+
+CREATE TABLE IF NOT EXISTS Followers(
+user_id BIGINT NOT NULL,
+follows_id BIGINT NOT NULL,
+PRIMARY KEY(user_id, follows_id)
+);
