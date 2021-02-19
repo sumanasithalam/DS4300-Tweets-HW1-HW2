@@ -9,10 +9,6 @@ import java.util.Map;
 
 public class Strategy1RedisImplAPI extends AbstractRedisImplAPI implements ITweetDatabaseAPI {
 
-//  Scanner millTweetsScan;
-//  Scanner userfollowersScan;
-//  Jedis jedis;
-
   /**
    * constructor for the API that takes in the filepaths of the million tweets and followers list
    *
@@ -22,10 +18,8 @@ public class Strategy1RedisImplAPI extends AbstractRedisImplAPI implements ITwee
    */
   public Strategy1RedisImplAPI(String millTweetsFilepath, String followersListFilepath)
       throws FileNotFoundException {
-//    this.millTweetsScan = new Scanner(new File(millTweetsFilepath));
-//    this.userfollowersScan = new Scanner(new File(followersListFilepath));
-//    authenticate("localhost", "root", "root");
     super(millTweetsFilepath, followersListFilepath);
+    jedis.set("tweetId", "0");
   }
 
   /**
@@ -53,17 +47,6 @@ public class Strategy1RedisImplAPI extends AbstractRedisImplAPI implements ITwee
     jedis.zadd(keyUsr, tsLong, twtId);
   }
 
-//  /**
-//   * add user ids to list of who they are following and who the user id is followed by
-//   *
-//   * @param uf the user and who they are following
-//   */
-//  @Override
-//  public void followUser(UserFollower uf) {
-//    jedis.lpush("USER_FOLLOWS:" + uf.getUser_id(), String.valueOf(uf.getFollows_id()));
-////    jedis.lpush("USER_FOLLOWED_BY:" + uf.getFollows_id(), String.valueOf(uf.getUser_id()));
-//  }
-
   /**
    * Get the 10 most recent tweets that the provided userID follows
    *
@@ -77,7 +60,6 @@ public class Strategy1RedisImplAPI extends AbstractRedisImplAPI implements ITwee
 
     String tlKey = "TIMELINE:" + userID;
 
-    int numUsers = whoUserFollows.size();
     StringBuilder sb = new StringBuilder();
     boolean isFirst = true;
     for (String strFollowingId : whoUserFollows) {
@@ -94,108 +76,4 @@ public class Strategy1RedisImplAPI extends AbstractRedisImplAPI implements ITwee
 
     return compileTL(tlKey);
   }
-
-//  /**
-//   * Get timelines for a number of users
-//   *
-//   * @param numUsersToGet the number of random users to return a timeline for
-//   * @return a hashmap containing the userID as the key and their home timelines as the
-//   * corresponding value
-//   */
-//  @Override
-//  public HashMap<Long, List<Tweet>> getABunchOfTimelines(int numUsersToGet) {
-//    HashMap<Long, List<Tweet>> hm = new HashMap<>();
-//    Random rand = new Random();
-//    for (int i = 0; i < numUsersToGet; i++) {
-//      long randomID = rand.nextInt(10000);
-//      while (hm.containsKey(randomID)) {
-//        randomID = rand.nextInt(10000);
-//      }
-//      List<Tweet> singleTL = getSingleTimeline(randomID);
-//      hm.put(randomID, singleTL);
-//    }
-//    return hm;
-//  }
-
-//  /**
-//   * Print a number of user timelines
-//   *
-//   * @param numUsersToGet the number of random users to return a timeline for
-//   */
-//  @Override
-//  public void printABunchOfTimelines(int numUsersToGet) {
-//    HashMap<Long, List<Tweet>> randomTLs = getABunchOfTimelines(numUsersToGet);
-//
-//    for (long uID : randomTLs.keySet()) {
-//      System.out.println("\n\nUser #" + uID + "'s Home Timeline:");
-//      for (Tweet t : randomTLs.get(uID)) {
-//        System.out.println(t.toString());
-//      }
-//    }
-//  }
-
-//  /**
-//   * insert all tweets
-//   */
-//  @Override
-//  public void postAllTweets() {
-//    int count = 0;
-//    Tweet t  = new Tweet();
-//    while (millTweetsScan.hasNextLine()) {
-//      if (count % 2 == 0) {
-//        String shouldBeLong = millTweetsScan.next();
-//        t.setUser_id(Long.valueOf(shouldBeLong));
-//        count++;
-//      }
-//      else if (count % 2 != 0) {
-//        String shouldBeText = millTweetsScan.next();
-//        t.setTweet_text(shouldBeText);
-//        count++;
-//        postTweet(t);
-//        t = new Tweet();
-//      }
-//    }
-//  }
-
-//  /**
-//   * insert all users and who they follow
-//   */
-//  @Override
-//  public void uploadAllUserFollowerPairs() {
-//    int count = 0;
-//    UserFollower uf  = new UserFollower();
-//    while (userfollowersScan.hasNextLine()) {
-//      if (count % 2 == 0) {
-//        uf.setUser_id(Long.valueOf(userfollowersScan.next()));
-//        count++;
-//      }
-//      else if (count % 2 != 0) {
-//        uf.setFollows_id(Long.valueOf(userfollowersScan.next()));
-//        count++;
-//        followUser(uf);
-//        uf = new UserFollower();
-//      }
-//    }
-//  }
-
-//  /**
-//   * Set connection settings
-//   *
-//   * @param url
-//   * @param user
-//   * @param password
-//   */
-//  @Override
-//  public void authenticate(String url, String user, String password) {
-//    jedis = new Jedis("localhost");
-//    jedis.set("tweetId", "0");
-//  }
-//
-//  /**
-//   * Flush all
-//   */
-//  @Override
-//  public void closeConnection() {
-//    jedis.flushAll();
-//  }
 }

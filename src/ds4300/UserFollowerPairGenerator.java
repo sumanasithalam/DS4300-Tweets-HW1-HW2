@@ -8,10 +8,10 @@ import java.util.Random;
 // generates between 1 and 40 users that each user follows, and returns as a text file with a user and who they follow alternating
 public class UserFollowerPairGenerator {
 
+  private static final Random rand = new Random();
   public static int NUM_USERS = 10000;
   public static int MAX_NUM_FOLLOWERS = 40;
   public static String FILE_NAME = "UserFollowerPairs.txt";
-  private static final Random rand = new Random();
 
   public static void main(String[] args) throws IOException {
     StringBuilder userFoll = new StringBuilder();

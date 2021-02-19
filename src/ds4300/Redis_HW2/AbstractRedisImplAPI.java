@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import redis.clients.jedis.Jedis;
 
 abstract public class AbstractRedisImplAPI implements ITweetDatabaseAPI {
+
   Scanner millTweetsScan;
   Scanner userfollowersScan;
   Jedis jedis;
@@ -51,59 +51,7 @@ abstract public class AbstractRedisImplAPI implements ITweetDatabaseAPI {
   @Override
   public void followUser(UserFollower uf) {
     jedis.lpush("USER_FOLLOWS:" + uf.getUser_id(), String.valueOf(uf.getFollows_id()));
-//    jedis.lpush("USER_FOLLOWED_BY:" + uf.getFollows_id(), String.valueOf(uf.getUser_id()));
   }
-
-//  /**
-//   * Get the 10 most recent tweets that the provided userID follows
-//   *
-//   * @param userID the id of the user
-//   * @return the home timeline containing 10 most recent tweets
-//   */
-//  @Override
-//  public List<Tweet> getSingleTimeline(long userID) {
-//    String usrKey = "USER_FOLLOWS:" + userID;
-//    List<String> whoUserFollows = jedis.lrange(usrKey, 0, -1);
-//
-//    String tlKey = "TIMELINE:" + userID;
-//
-//    int numUsers = whoUserFollows.size();
-//    StringBuilder sb = new StringBuilder();
-//    boolean isFirst = true;
-//    for (String strFollowingId : whoUserFollows) {
-//      String user = "USER_TWEETS:" + strFollowingId;
-//      if (isFirst) {
-//        sb.append(user);
-//        isFirst = false;
-//      } else {
-//        sb.append(" " + user);
-//      }
-//    }
-//
-//    jedis.zunionstore(tlKey, sb.toString().split(" "));
-//
-//    Set<String> topTenTweetIds = jedis.zrange(tlKey, 0, 9);
-//
-//    List<Tweet> tweetIds = new ArrayList<>();
-//    for (String str : topTenTweetIds) {
-//      Tweet t = new Tweet();
-//      String keyName = "TWEET:" + str;
-//
-//      t.setTweet_text(jedis.hget(keyName, "text"));
-//      t.setUser_id(Long.parseLong(jedis.hget(keyName, "userID")));
-//      t.setTweetId(Long.parseLong(str));
-//
-//      String millisecondsTS = jedis.hget(keyName, "timestamp");
-//      Date dateTS = new Date(Long.valueOf(millisecondsTS));
-//      SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
-//      String stringFormattedTS = sdf.format(dateTS);
-//      t.setTweetTimestamp(stringFormattedTS);
-//
-//      tweetIds.add(t);
-//    }
-//
-//    return tweetIds;
-//  }
 
   public List<Tweet> compileTL(String timelineKey) {
     Set<String> topTenStringIDs = jedis.zrange(timelineKey, 0, 9);
@@ -174,14 +122,13 @@ abstract public class AbstractRedisImplAPI implements ITweetDatabaseAPI {
   @Override
   public void postAllTweets() {
     int count = 0;
-    Tweet t  = new Tweet();
+    Tweet t = new Tweet();
     while (millTweetsScan.hasNextLine()) {
       if (count % 2 == 0) {
         String shouldBeLong = millTweetsScan.next();
         t.setUser_id(Long.valueOf(shouldBeLong));
         count++;
-      }
-      else if (count % 2 != 0) {
+      } else if (count % 2 != 0) {
         String shouldBeText = millTweetsScan.next();
         t.setTweet_text(shouldBeText);
         count++;
@@ -197,13 +144,12 @@ abstract public class AbstractRedisImplAPI implements ITweetDatabaseAPI {
   @Override
   public void uploadAllUserFollowerPairs() {
     int count = 0;
-    UserFollower uf  = new UserFollower();
+    UserFollower uf = new UserFollower();
     while (userfollowersScan.hasNextLine()) {
       if (count % 2 == 0) {
         uf.setUser_id(Long.valueOf(userfollowersScan.next()));
         count++;
-      }
-      else if (count % 2 != 0) {
+      } else if (count % 2 != 0) {
         uf.setFollows_id(Long.valueOf(userfollowersScan.next()));
         count++;
         followUser(uf);
@@ -229,7 +175,7 @@ abstract public class AbstractRedisImplAPI implements ITweetDatabaseAPI {
    * Flush all
    */
   @Override
-  public void closeConnection() {
+  public void closeOrFlush() {
     jedis.flushAll();
   }
 }

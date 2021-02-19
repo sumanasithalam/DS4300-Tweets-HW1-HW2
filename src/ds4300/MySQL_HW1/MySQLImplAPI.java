@@ -270,7 +270,7 @@ public class MySQLImplAPI implements ITweetDatabaseAPI {
    * Close the connection when application finishes
    */
   @Override
-  public void closeConnection() {
+  public void closeOrFlush() {
     dbu.closeConnection();
   }
 }

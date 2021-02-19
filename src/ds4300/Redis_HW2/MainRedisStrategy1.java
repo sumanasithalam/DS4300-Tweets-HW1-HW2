@@ -38,7 +38,7 @@ public class MainRedisStrategy1 {
     System.out.println("\n\nafter printing 5000 timelines");
     System.out.println(Instant.now());
 
-//    api.closeConnection();
+    //    api.closeOrFlush();
   }
 
 }

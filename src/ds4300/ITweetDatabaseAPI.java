@@ -38,6 +38,7 @@ public interface ITweetDatabaseAPI {
 
   /**
    * Print the timelines for a number of users
+   *
    * @param numUsersToGet the number of random users to return a timeline for
    */
   void printABunchOfTimelines(int numUsersToGet);
@@ -64,5 +65,5 @@ public interface ITweetDatabaseAPI {
   /**
    * Close the connection when application finishes
    */
-  void closeConnection();
+  void closeOrFlush();
 }
