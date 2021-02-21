@@ -54,7 +54,7 @@ abstract public class AbstractRedisImplAPI implements ITweetDatabaseAPI {
   }
 
   public List<Tweet> compileTL(String timelineKey) {
-    Set<String> topTenStringIDs = jedis.zrange(timelineKey, 0, 9);
+    Set<String> topTenStringIDs = jedis.zrevrange(timelineKey, 0, 9);
     List<Tweet> tweetIds = new ArrayList<>();
     for (String str : topTenStringIDs) {
       Tweet t = new Tweet();
